@@ -27,6 +27,13 @@
 
 
 通过musicfrontencryptvalidator.min.js文件追溯到一开始生成params和encSecKey参数的是core......文件
-![img_2.png](img_2.png)
-![img_1.png](img_1.png)
-其中的i7b文件中op应该是将歌曲添加到歌曲列表中的意思，pid是指即将要被分享到的歌单id，trackids是指所选中的歌曲id
+![溯源信息.png](溯源信息.png)
+![歌曲及歌单详细信息参数.png](歌曲及歌单详细信息参数.png)
+其中的i7b文件中op应该是将歌曲添加到歌曲列表中的意思，
+csrf_token应该是不变的（在隔天再次访问还是同一个值，不知道会不会随时间改变）
+pid是指即将要被分享到的歌单id，
+trackids是指所选中的歌曲id
+
+
+
+有个'track_playlist-add'的字典，存储要添加歌曲的各种变量

@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../MyCrawlers/.idea/MyCrawlers.iml" filepath="$PROJECT_DIR$/../MyCrawlers/.idea/MyCrawlers.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/NeteaseMusic.iml" filepath="$PROJECT_DIR$/.idea/NeteaseMusic.iml" />
       <module fileurl="file://$PROJECT_DIR$/../Python/.idea/Python.iml" filepath="$PROJECT_DIR$/../Python/.idea/Python.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Python-crawler-tutorial-starts-from-zero/.idea/Python-crawler-tutorial-starts-from-zero.iml" filepath="$PROJECT_DIR$/../Python-crawler-tutorial-starts-from-zero/.idea/Python-crawler-tutorial-starts-from-zero.iml" />
     </modules>
   </component>
 </project>
