@@ -22,10 +22,8 @@ pycryptodome==3.14.1
 pyjsparser==2.7.1
 pyOpenSSL==21.0.0
 pytz-deprecation-shim==0.1.0.post0
-pywin32==302
 PyYAML==6.0
 requests==2.26.0
-selenium==4.0.0
 shellescape==3.8.1
 six==1.16.0
 sniffio==1.2.0
