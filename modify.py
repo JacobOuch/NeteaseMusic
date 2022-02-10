@@ -7,6 +7,7 @@ import codecs
 import json
 import base64
 import pandas as pd
+import handle_tracks
 
 """--------------------------------------"""
 
@@ -179,7 +180,7 @@ class NeteaseMusic():
         # }
         return needed_parameters
 
-    def move_songs(self, playlistid: str, trackid: list) -> dict:
+    def move_songs(self, playlistid: str, trackids: list, op: str) -> dict:
         """
 
         :param playlistid: 被操作的歌单id
@@ -188,23 +189,20 @@ class NeteaseMusic():
         """
         i7b = {
             'csrf_token': "bc5475e560cb2023ad355da57937c2f3",
-            'op': "add",  # 如果要删除对应歌单里的某首歌，可以直接把op的值改成del
+            'op': f"{op}",  # 如果要删除对应歌单里的某首歌，可以直接把op的值改成del
             'pid': f"{playlistid}",
-            'trackIds': f"{trackid}",
+            'trackIds': f"{trackids}",
             'tracks': "[object Object]",
         }
         i7b = json.dumps(i7b, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
         needed_parameters = self.get_needed_parameters(i7b)
         headers = needed_parameters['headers']
         data = needed_parameters['data']
-        # data = {
-        #     'params': "/04CNL9p6kzvWaQ+waPEIRfwZAGZHRYc8ipI/xtTWRcGnjqhDL+/GHuktox/v2wwYN4K3q94DnDqHgngYNNK32E1vINS7CQEVaExj8vr9CBw38jQcL/EKPL+ND1zEYvSs8G/Yhp8QD021xSWr/1ZdXtFjgLhkXtt/1WCzcAoZsQWIHkCjGxf9+mH3/6ECJdu6QZTn8j9RiHo6VtGp9LHBA9R8WKH8GACSqgLBp71HpjCQ/OwQasAEj6PPgrfnOCDhOVMu2060qzD1L4VpCPMvQ==",
-        #     'encSecKey': "d2dc89feb96ae7cd403acc9c949a3120d07c99158b2395caf2e2336861461d1298ea3649a7bd6ed4a1dea1359310d4c3fe08a3f73da123a472fb07d7a50ceb504a65b04cd5e0ef35add7f3ac59d3273c3861590978832e5393caa66043aa8b249e33e6e157c15ca84b88a7c90458712823b1aefa7bc900f8426fc285f7155bda",
-        # }
         url = "https://music.163.com/weapi/playlist/manipulate/tracks?csrf_token=bc5475e560cb2023ad355da57937c2f3"
         # url = "https://music.163.com/weapi/playlist/manipulate/tracks?csrf_token=b08c761c098f97ef361342261fbf40f5"
 
         response = requests.post(url=url, data=data, headers=headers)
+        print(response.json())
         return response.json()
 
     def get_tracks_information(self, playlistid: str) -> dict:
@@ -240,6 +238,7 @@ class NeteaseMusic():
 
 if __name__ == '__main__':
     neteasemusic = NeteaseMusic()
-    result = neteasemusic.get_tracks_information(playlistid='427248017')
-    print(result)
-    to_csv(result)
+    # result = neteasemusic.get_tracks_information(playlistid='427248017')
+    # to_csv(result)
+    trackids = handle_tracks.get_english_ids()
+    neteasemusic.move_songs(playlistid='7273127486', trackids=trackids, op='add')
