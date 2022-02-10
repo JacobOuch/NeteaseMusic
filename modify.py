@@ -9,7 +9,6 @@ import base64
 import pandas as pd
 import handle_tracks
 
-"""--------------------------------------"""
 
 """
 /*
@@ -119,25 +118,7 @@ def encrypt_WangYiYun(plaintext, pub_key=PUB_KEY, modulus=MODULUS, key=KEY):
     return {"params": encText.decode("utf-8"), "encSecKey": encSecKey}
 
 
-"""--------------------------------------"""
-
-
-def params_and_seckey():
-    result = {}
-    context = js2py.EvalJs()
-    # js逆向获取sign的值
-    # 读取js文件
-    # with open("core_c7e792091b6d99f34b3689555f66c642.js", "r", encoding="utf-8") as f:
-    with open("encrypt.js", "r", encoding="utf-8") as f:
-        # with open("changed_core.js", "r", encoding="utf-8") as f:
-        # 添加至上下文
-        context.execute(f.read())
-    result_sth = context.a()
-
-    return result_sth
-
-
-def to_csv(dictonary):
+def df_to_csv(dictonary):
     tracks_dataframe = pd.DataFrame(dictonary)
     # tracks_dataframe = pd.DataFrame(columns=list(dictonary.keys())[1:], data=list(dictonary.values()[1:]))
     tracks_dataframe.to_csv(f".\\{dictonary['playlist']}.csv", encoding='utf-8')
@@ -174,15 +155,10 @@ class NeteaseMusic():
             'params': params_and_encSecKey['params'],
             'encSecKey': params_and_encSecKey['encSecKey'],
         }
-        # needed_parameters['data'] = {
-        #     'params': "/04CNL9p6kzvWaQ+waPEIRfwZAGZHRYc8ipI/xtTWRcGnjqhDL+/GHuktox/v2wwYN4K3q94DnDqHgngYNNK32E1vINS7CQEVaExj8vr9CBw38jQcL/EKPL+ND1zEYvSs8G/Yhp8QD021xSWr/1ZdXtFjgLhkXtt/1WCzcAoZsQWIHkCjGxf9+mH3/6ECJdu6QZTn8j9RiHo6VtGp9LHBA9R8WKH8GACSqgLBp71HpjCQ/OwQasAEj6PPgrfnOCDhOVMu2060qzD1L4VpCPMvQ==",
-        #     'encSecKey': "d2dc89feb96ae7cd403acc9c949a3120d07c99158b2395caf2e2336861461d1298ea3649a7bd6ed4a1dea1359310d4c3fe08a3f73da123a472fb07d7a50ceb504a65b04cd5e0ef35add7f3ac59d3273c3861590978832e5393caa66043aa8b249e33e6e157c15ca84b88a7c90458712823b1aefa7bc900f8426fc285f7155bda",
-        # }
         return needed_parameters
 
     def move_songs(self, playlistid: str, trackids: list, op: str) -> dict:
         """
-
         :param playlistid: 被操作的歌单id
         :param trackid: 被操作的歌id
         :return: code为200则成功，502为歌曲重复
@@ -209,8 +185,8 @@ class NeteaseMusic():
         i7b = {
             'csrf_token': "bc5475e560cb2023ad355da57937c2f3",
             'id': f"{playlistid}",
-            'limit': "500000",
-            'n': "500000",
+            'limit': "2000",
+            'n': "2000",
             'offset': "0",
             'total': "true"
         }
@@ -232,13 +208,32 @@ class NeteaseMusic():
                               'singerids': singerids, 'albums': albums}
         return tracks_information
 
-    def match_and_move_english(self):
-        pass
+    def cut_songs(self, **kwargs):
+        self.move_songs(playlistid=kwargs['des_playlist'], trackids=kwargs['trackids'], op='add')   # 先添加到目的歌单
+        self.move_songs(playlistid=kwargs['src_playlist'], trackids=kwargs['trackids'], op='del')   # 再从源歌单删除
 
 
 if __name__ == '__main__':
+    """
+    我喜欢"的歌单id：427248017
+    华语：7284711237
+    English：7273127486
+    日语：7222794221
+    韩语：7285069246
+    """
     neteasemusic = NeteaseMusic()
-    # result = neteasemusic.get_tracks_information(playlistid='427248017')
-    # to_csv(result)
-    trackids = handle_tracks.get_english_ids()
-    neteasemusic.move_songs(playlistid='7273127486', trackids=trackids, op='add')
+    result = neteasemusic.get_tracks_information(playlistid='427248017')
+    df_to_csv(result)
+    ids = handle_tracks.get_ids()
+    kr_ids = [str(id) for id in ids['korean_ids']]
+    jp_ids = [str(id) for id in ids['japanese_ids']]
+    en_ids = [str(id) for id in ids['english_ids']]
+    ch_ids = [str(id) for id in ids['chinese_ids']]
+    # neteasemusic.move_songs(playlistid='7222794221', trackids=jp_ids, op='add')    # 将日文歌加到《日語》歌单
+    # neteasemusic.move_songs(playlistid='7273127486', trackids=en_ids, op='add')    # 将英文歌加到《English》歌单
+    # neteasemusic.move_songs(playlistid='7284711237', trackids=ch_ids, op='add')    # 将华语歌加到《华语》歌单
+    # neteasemusic.move_songs(playlistid='427248017', trackids=en_ids, op='del')    # 将英文歌从我喜欢中删除
+    # neteasemusic.move_songs(playlistid='427248017', trackids=jp_ids, op='del')    # 将日文歌从我喜欢中删除
+    # neteasemusic.cut_songs(src_playlist='427248017', des_playlist='7273127486', trackids=en_ids)    # 从我喜欢剪切英文歌到english
+    neteasemusic.cut_songs(src_playlist='427248017', des_playlist='7222794221', trackids=jp_ids)    # 从我喜欢剪切日文歌到日语
+    # neteasemusic.cut_songs(src_playlist='427248017', des_playlist='7285069246', trackids=kr_ids)    # 从我喜欢剪切韩文歌到韩语

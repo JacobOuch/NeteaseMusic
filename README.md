@@ -4,6 +4,7 @@
 
 `一些参数id：
 "我喜欢"的歌单id：427248017
+华语：7284711237
 English：7273127486
 日语：7222794221`
 
@@ -40,7 +41,8 @@ offset: "0"
 total: "true"`
 ![post所需的参数-2.png](post所需的参数-2.png)
 以Everybody hates me为例：
-分享歌曲链接为：https://music.163.com/song?id=544247523&userid=307853190
+分享歌曲链接为：https://music.163.com
+/song?id=544247523&userid=307853190
 
 歌曲ID为544247523
 对应用户的userid为307853190
