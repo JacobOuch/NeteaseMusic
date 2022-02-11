@@ -1,78 +1,162 @@
-# NeteaseMusic
+# 网易云音乐 [https://music.163.com/](https://music.163.com/)
 
-## 要做一个可以自动按照歌曲的语言将歌单中的歌曲转移到指定歌单的python程序
-### 
+# 一个可以按照歌曲的语言自动将歌单中的歌曲转移到指定歌单的python程序
 
-`一些参数id：
-"我喜欢"的歌单id：427248017
-华语：7284711237
-English：7273127486
-日语：7222794221`
+## 分析
 
-查找在歌单中歌曲的id和名称，比如：《让我快乐》，id为1428166904
-![img_1.png](歌曲id与名称查找-1.png)
-![img_2.png](歌曲id与名称查找-2.png)
-`Request URL: https://music.163.com/weapi/v6/playlist/detail?csrf_token=bc5475e560cb2023ad355da57937c2f3
-params: wFkxchv2mhwCGm9/N9bN99gOnLHsUTspEKuqJHYROVeoawRnkvbuRYL6HjIHoppqBKKbuGCE+wMcn2momKISFhUhIsHamzTFG2Yu4lSjHa78FiKgJvsD3b/yJfdhpfHSlFW+dMNkACBO5yfhbIvdJovxOvYSyWeTBCaNJd8X/0pdV8uwK5HjF9EOvEO5EXzryLWrwRxCTWJaW7lJ3H/qx/qCqLKBbHJ6bZCo3r3o7zc=
-encSecKey: 5601f8b904fdf94379598c3bf0ec747c8a4b61ceb82d8c949a58c3f499d54a4a2aa7bf355843bea771a30ffb40a670ca77c4c1cd014032e987d15e16e56cd6ec4335410f75838440746c0f382d622f2f55a2b3ac6ddc2af4267b0448011b7b84f3a4a9d52ce1f7da901427d74306765c599eb90bdb95e3a749af240ddf4d1896`
+### 【1】歌单分析
+
+`一些参数id：`
+
+`"我喜欢"的歌单id：427248017`
+
+`华语：7284711237`
+
+`English：7273127486`
+
+`日语：7222794221`
+
+1. 查找在歌单中歌曲的id和名称，比如：《让我快乐》，id为1428166904
+   ![歌曲id与名称查找-1.png](images/歌曲id与名称查找-1.png)
+   ![歌曲id与名称查找-2.png](images/歌曲id与名称查找-2.png)
+2. 分析数据包
+
+- 找到调用的api：
+  ` https://music.163.com/weapi/v6/playlist/detail?csrf_token=...`
+- 向api请求时要传的数据
+  ` params: wFkxchv2mhwCGm9/N9bN99gOnLHsUTsp...`
+  ` encSecKey: 5601f8b904fdf94379598c3bf0ec7...`
 
 
-post的URL：
-Y8Q: "https://music.163.com/weapi/user/playlist"
+3. 再用同样的方法搜encSecKey，发现params和encSecKey出于core_c7e.....js文件。
+   ![img.png](./images/params和encSecKey出处.png)
 
-post所需的参数：
-`
+```js
+var bVj7c = window.asrsea(JSON.stringify(i7b), bsR1x(["流泪", "强"]), bsR1x(Xp4t.md), bsR1x(["爱心", "女孩", "惊恐", "大笑"]));
+e7d.data = j7c.cq8i({
+    params: bVj7c.encText,
+    encSecKey: bVj7c.encSecKey
+})
+```
+
+以上涉及加密操作，感谢[@DAJINZI01](https://github.com/DAJINZI01) 的 [网易云加密算法分析](https://github.com/DAJINZI01/music163com)
+
+可以看出，知道`asrsea`函数是怎么工作的就解决了问题，又因为`window.asrsea = d,`所以看一下`d`函数，
+`d`函数又由`a/b/c`函数组成，所以，接下来一次看一下`a/b/c`函数
+
+还能得到`Y8Q`和`i7b`参数的值，不难猜出`Y8Q`就是所要调用的api，`i7b`是我们要向服务器传送的数据，只要向api post`Y8Q`和`i7b`加密后的数据即可。
+
+```
+Y8Q: 
+    "https://music.163.com/weapi/v6/playlist/detail"
+```
+
+```
 i7b:
-csrf_token: "bc5475e560cb2023ad355da57937c2f3"
-limit: "1001"
-offset: "0"
-uid: "307853190"
-`
-![post所需的参数.png](post所需的参数.png)
+    csrf_token: ""
+    id: "427248017"
+    limit: "1000"
+    n: "1000"
+    offset: "0"
+    total: "true"
+```
 
-post的URL：
-Y8Q: "https://music.163.com/weapi/v6/playlist/detail"
+### 【2】调动歌曲分析
 
-`i7b:
-csrf_token: "bc5475e560cb2023ad355da57937c2f3"
-id: "427248017"
-limit: "1000"
-n: "1000"
-offset: "0"
-total: "true"`
-![post所需的参数-2.png](post所需的参数-2.png)
-以Everybody hates me为例：
-分享歌曲链接为：https://music.163.com
-/song?id=544247523&userid=307853190
+1. 点击将歌曲添加到某个歌单，可以调试到也是追溯到这一行，说明跟上面的加密操作一样，只需要改变`i7b`和`Y8Q`就可以。
+   ![添加歌曲到某歌单.png](images/添加歌曲到某歌单.png)
 
-歌曲ID为544247523
-对应用户的userid为307853190
+```js
+Y8Q:"https://music.163.com/weapi/playlist/manipulate/tracks"
 
 
-可以先把A歌单中的歌曲移到B歌单，再选择性地把这首歌从A歌单中删除。
+i7b:
+csrf_token: "ec1eb9f50e4505170497d999f3d969d7"
+op: "add"
+pid: "7273127486"
+trackIds: "[509728806]"
+tracks: "[object Object]"
+```
 
-在XHR请求'tracks?csrf_token=bc5475e560cb2023ad355da57937c2f3'完成：
+- 其中的i7b文件中op应该是将歌曲添加到歌曲列表中的意思， csrf_token应该是不变的（在隔天再次访问还是同一个值，不知道会不会随时间改变） pid是指目的歌单id， trackids是指所选中的歌曲id
 
-添加成功之后的response：
-{
-  "trackIds": "[544247523]",
-  "code": 200,
-  "count": 5,
-  "cloudCount": 0
-}
+2. 分析添加成功之后的response，trackIds为列表，尝试过一次性加入多首歌曲的id，事实证明可以： {
+   "trackIds": "[544247523]",
+   "code": 200,
+   "count": 5,
+   "cloudCount": 0 }
 
-应该是通过musicfrontencryptvalidator.min.js这个js文件来生成params和encSecKey参数
-![转歌单xhr的来源musicfrontencryptvalidator.png](img.png)
+## 程序实现
+
+-
+    1. encrypt.py
+
+经过分析可以知道，向服务器传输的数据需要加密操作，加密算法涉及到AES和RSA混合加密，所以借鉴[@DAJINZI01](https://github.com/DAJINZI01)
+的[cipher.py](https://github.com/DAJINZI01/music163com) 写了一个encrypt.py，传入我们要向服务器发送的json数据，encrypt.py可以返回
+加密之后的params和encSecKey
+
+-
+    2. Netease.py
+
+编写一个网易云音乐的类，包含了自定义函数、move_songs、get_tracks_information、cut_songs、df_to_csv
+
+~~~
+- 自定义函数   定义token，需要用户自行输入
+- move_songs 操作传入的歌单和歌曲，根据参数op决定是添加歌曲还是删除歌曲， 比如要像歌单123中加入为歌曲id为456，789的歌，playlistid就为123，trackids就是[456,789]，op是'add'
+- get_tracks_information 根据传入的歌单id参数返回歌单的信息，信息包括歌单名字、歌曲名、歌曲id、歌手名、歌手id、专辑名
+- cut_songs 调用move_songs函数实现歌曲的剪切功能
+- df_to_csv 将传入的字典用csv存储，以歌单的名称命名
+~~~
+
+-
+    3. sort_tracks.py
+
+返回歌曲id字典，字典按歌曲语言进行分类，函数中的language（小写）用来存储对应歌曲的语言，并将对应语言保存在新的以`changed_`开头+歌单命名的CSV文件中。 可以匹配`中英日韩文`。
+
+-
+    4. playlists.py
+
+调用各个函数的主函数，调用上述函数完成移动歌曲的操作。
+
+## 使用方法
+
+### 环境要求
+    需要 Python 3.5+ 环境
+### 安装
+
+```
+git clone 
+cd [NeteaseMusic存放的文件夹]
+pip install -r requirements.txt
+```
+
+### 修改参数
+
+1. Netease.py
+   - 需要把token改成自己的token，将自己token的值取替`自己添加`即可，token可以通过在浏览器按`F12`，选中`Network`的`Fetch/XHR`并刷新页面，将自己的token复制到`Netease.py`中的
+     ```python
+         self.token = '自己添加'  # 用户自己添加
+     ```
+   - 查看token：
+  ![查看token.png](images/查看token.png)
+
+   - 复制cookie 定位到`Netease.py`中的代码：
+     ```python
+     cookie: 自己添加
+     ```
+      将自己的cookie的值取替`自己添加`即可
+    
+   - 查看cookie：
+     ![查看cookie.png](images/查看cookie.png)
 
 
-通过musicfrontencryptvalidator.min.js文件追溯到一开始生成params和encSecKey参数的是core......文件
-![溯源信息.png](溯源信息.png)
-![歌曲及歌单详细信息参数.png](歌曲及歌单详细信息参数.png)
-其中的i7b文件中op应该是将歌曲添加到歌曲列表中的意思，
-csrf_token应该是不变的（在隔天再次访问还是同一个值，不知道会不会随时间改变）
-pid是指即将要被分享到的歌单id，
-trackids是指所选中的歌曲id
+2. playlist.py 
+    - 定位到playlist.py中的以下代码，将参数playlistid改成要转移的源歌单id
+    ```python
+    result = neteasemusic.get_tracks_information(playlistid='427248017')  # 根据所给的歌单id获取歌单信息
+    ```
+    - 比如要在歌单`abc`中加入为歌曲id为`456，789`的歌，`playlistid`就为`abc`，`trackids`就是`[456,789]`，`op`是`add`
+    - 比如要把歌单`abc`中歌曲id为`456，789`的歌剪切到歌单`edf`，
+   可以调用cut_songs，`src_playlist`就为`abc`，`des_playlist`就是`edf`，`trackids`就是`[456,789]`.
+        
 
-
-
-有个'track_playlist-add'的字典，存储要添加歌曲的各种变量
