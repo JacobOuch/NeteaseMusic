@@ -7,7 +7,7 @@ import pandas as pd
 
 class NeteaseMusic():
     def __init__(self):
-        self.token = 'ec1eb9f50e4505170497d999f3d969d7'  # 用户自己添加
+        self.token = '自己添加'  # 用户自己添加
         pass
 
     def encrypt_parameters(self, i7b):
@@ -27,7 +27,7 @@ class NeteaseMusic():
         content-length: 576
         content-type: application/x-www-form-urlencoded
         nm-gcore-status: 1
-        cookie: _ga=GA1.1.1048729511.1629103325; Qs_lvt_382223=1629103325; Qs_pv_382223=459897220871502800; _ntes_nnid=cd03c58fb5fcdff26dca50bfad3dbc5e,1629103325602; _ntes_nuid=cd03c58fb5fcdff26dca50bfad3dbc5e; _clck=155jmxr|1|etx; _ga_C6TGHFPQ1H=GS1.1.1629103325.1.0.1629103332.0; vinfo_n_f_l_n3=7f460ce273df2509.1.0.1630494303935.0.1630494603171; _iuqxldmzr_=32; NMTID=00OelitiKEzgGo2a0t8iXe3XiUquxkAAAF-0l68vA; WEVNSM=1.0.0; WNMCID=spenol.1644206933788.01.0; WM_TID=4RYz%2FUdEY09AUEFUABY%2FoO1Koi2axpK9; ntes_kaola_ad=1; __remember_me=true; MUSIC_U=f189b537ee5001b24663937178cbfd79a177d1f7c981493c3f49c1294ebc1eb4519e07624a9f0053d78b6050a17a35e705925a4e6992f61dfe3f0151024f9e31; __csrf=ec1eb9f50e4505170497d999f3d969d7; WM_NIKE=9ca17ae2e6ffcda170e2e6eebbcc628b929c9ad03c81a88ea2d84f928f9eafaa25a2b8fbdace4989afafb8c82af0fea7c3b92afba6f9bbcd6a91ba85d6c76e88aea1b3d34993bdbf8de874f2b488b0c534e9adfc8ff939b691b782fc548b958ab6ee7eb48787abe55ab59db891c153b49b8b8cc221adeb8782bc3bb1f08b96f554969e8e93bb6bf8b0a7a9b23cbcb0ab9aec3cbbecaf88c76eb4f58999fc3d949aacd3fb39f5f583d2d36787a6bf8cf6738eb6aeb6f637e2a3; WM_NI=9z7ZNbSfK5DfDroRPCQcqlex2lHOF8%2Bs4nz3vOyayXIKFUovpYIJfRwCxpBYpEEkC%2Bo5Ia91s0EuvXVBBr8a4piH30xpeyi0y4agDfp%2BGxy7PFd2x37%2BM1PmEzqkwyNjbUw%3D; JSESSIONID-WYYY=HZjF8imxzuHmqaNRnONW72hs%5C0EhSi9KhkT1QkR7TT%2BTsGgkW7gmrp2gUalW%5CAXjJ%2F2%5C6QDxBhI%5CjqTNkvjeRUkdWx0dDy8o8cKQKrUwcebF8bI4fi8lW2ltd%5CU%2F5dDK0gtT5qU2gn%2F2Nohw7%5CWmcqvUONY0Ui73p2ZIyMfFn724kBnc%3A1644564917702
+        cookie: 自己添加
         origin: https://music.163.com
         referer: https://music.163.com/my/
         sec-ch-ua: " Not;A Brand";v="99", "Google Chrome";v="97", "Chromium";v="97"
