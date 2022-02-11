@@ -1,5 +1,13 @@
 # 网易云音乐 [https://music.163.com/](https://music.163.com/)
 
+* [分析](#分析)
+    * [歌单分析](#歌单分析)
+    * [调动歌曲分析](#调动分析流程)
+* [程序实现](#程序实现)
+* [使用方法](#使用方法)
+* [安装](#安装)
+* [修改参数](#修改参数)
+
 # 一个可以按照歌曲的语言自动将歌单中的歌曲转移到指定歌单的python程序
 
 ## 分析
@@ -71,7 +79,7 @@ Y8Q:"https://music.163.com/weapi/playlist/manipulate/tracks"
 
 
 i7b:
-csrf_token: "ec1eb9f50e4505170497d999f3d969d7"
+    csrf_token: ""
 op: "add"
 pid: "7273127486"
 trackIds: "[509728806]"
@@ -121,7 +129,9 @@ tracks: "[object Object]"
 ## 使用方法
 
 ### 环境要求
+
     需要 Python 3.5+ 环境
+
 ### 安装
 
 ```
@@ -133,30 +143,31 @@ pip install -r requirements.txt
 ### 修改参数
 
 1. Netease.py
-   - 需要把token改成自己的token，将自己token的值取替`自己添加`即可，token可以通过在浏览器按`F12`，选中`Network`的`Fetch/XHR`并刷新页面，将自己的token复制到`Netease.py`中的
-     ```python
-         self.token = '自己添加'  # 用户自己添加
-     ```
-   - 查看token：
-  ![查看token.png](images/查看token.png)
+    - 需要把token改成自己的token，将自己token的值取替`自己添加`即可，token可以通过在浏览器按`F12`，选中`Network`的`Fetch/XHR`并刷新页面，将自己的token复制到`Netease.py`
+      中的
+      ```python
+          self.token = '自己添加'  # 用户自己添加
+      ```
+    - 查看token：
+      ![查看token.png](images/查看token.png)
 
-   - 复制cookie 定位到`Netease.py`中的代码：
-     ```python
-     cookie: 自己添加
-     ```
+    - 复制cookie 定位到`Netease.py`中的代码：
+      ```python
+      cookie: 自己添加
+      ```
       将自己的cookie的值取替`自己添加`即可
-    
-   - 查看cookie：
-     ![查看cookie.png](images/查看cookie.png)
+
+    - 查看cookie：
+      ![查看cookie.png](images/查看cookie.png)
 
 
-2. playlist.py 
+2. playlist.py
     - 定位到playlist.py中的以下代码，将参数playlistid改成要转移的源歌单id
     ```python
     result = neteasemusic.get_tracks_information(playlistid='427248017')  # 根据所给的歌单id获取歌单信息
     ```
     - 比如要在歌单`abc`中加入为歌曲id为`456，789`的歌，`playlistid`就为`abc`，`trackids`就是`[456,789]`，`op`是`add`
-    - 比如要把歌单`abc`中歌曲id为`456，789`的歌剪切到歌单`edf`，
-   可以调用cut_songs，`src_playlist`就为`abc`，`des_playlist`就是`edf`，`trackids`就是`[456,789]`.
+    - 比如要把歌单`abc`中歌曲id为`456，789`的歌剪切到歌单`edf`， 可以调用cut_songs，`src_playlist`就为`abc`，`des_playlist`就是`edf`，`trackids`
+      就是`[456,789]`.
         
 
