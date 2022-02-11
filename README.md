@@ -170,4 +170,4 @@ pip install -r requirements.txt
     - 比如要把歌单`abc`中歌曲id为`456，789`的歌剪切到歌单`edf`， 可以调用cut_songs，`src_playlist`就为`abc`，`des_playlist`就是`edf`，`trackids`
       就是`[456,789]`.
         
-
+修改完参数之后，直接运行playlist.py即可
