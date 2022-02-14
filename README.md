@@ -130,7 +130,7 @@ tracks: "[object Object]"
 -
     4. playlists.py
 
-调用各个函数的主函数，调用上述函数完成移动歌曲的操作。
+调用上述包完成移动歌曲的操作。
 
 ## 使用方法
 
@@ -175,5 +175,16 @@ pip install -r requirements.txt
     - 比如要在歌单`abc`中加入为歌曲id为`456，789`的歌，`playlistid`就为`abc`，`trackids`就是`[456,789]`，`op`是`add`
     - 比如要把歌单`abc`中歌曲id为`456，789`的歌剪切到歌单`edf`， 可以调用cut_songs，`src_playlist`就为`abc`，`des_playlist`就是`edf`，`trackids`
       就是`[456,789]`.
-        
-修改完参数之后，直接运行playlist.py即可
+   
+
+
+### 程序运行
+完成修改参数[修改参数](#修改参数)之后，直接运行playlist.py即可
+```shell
+
+# windows
+python .\playlist.py 
+
+#Linux
+python ./playlist.py 
+```

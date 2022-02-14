@@ -1,3 +1,13 @@
+"""
+@Author: JacobOuch
+@License:
+@Contact: 943411478@qq.com
+@File: sort_tracks.py
+@Time: 2022/2/14 下午 1:16
+@Software: PyCharm
+@Description: 返回歌曲id字典，字典按歌曲语言进行分类，函数中的language（小写）用来存储对应歌曲的语言，并将对应语言保存在新的以
+`changed_`开头+歌单命名的CSV文件中。 可以匹配`中英日韩文`。
+"""
 import re
 import pandas as pd
 

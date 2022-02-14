@@ -1,3 +1,13 @@
+"""
+@Author: JacobOuch
+@License:
+@Contact: 943411478@qq.com
+@File: sort_tracks.py
+@Time: 2022/2/14 下午 1:16
+@Software: PyCharm
+@Description: 调用程序中的所有包完成移动歌曲的操作。
+"""
+
 import sys
 import sort_tracks
 from Netease import NeteaseMusic
