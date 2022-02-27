@@ -20,30 +20,36 @@
 
 ### 【1】歌单分析
 
-`一些参数id：`
+```
+一些参数id：
 
-`"我喜欢"的歌单id：427248017`
+"我喜欢"的歌单id：427248017
 
-`华语：7284711237`
+华语：7284711237
 
-`English：7273127486`
+English：7273127486
 
-`日语：7222794221`
+日语：7222794221
 
-1. 查找在歌单中歌曲的id和名称，比如：《让我快乐》，id为1428166904
+```
+
+1. 查找在歌单中歌曲的id和名称，比如：<mark>《让我快乐》</mark>，id为<font color=red>1428166904</font>
    ![歌曲id与名称查找-1.png](images/歌曲id与名称查找-1.png)
    ![歌曲id与名称查找-2.png](images/歌曲id与名称查找-2.png)
+
+
 2. 分析数据包
 
 - 找到调用的api：
   ` https://music.163.com/weapi/v6/playlist/detail?csrf_token=...`
+
 - 向api请求时要传的数据
   ` params: wFkxchv2mhwCGm9/N9bN99gOnLHsUTsp...`
   ` encSecKey: 5601f8b904fdf94379598c3bf0ec7...`
 
 
 3. 再用同样的方法搜encSecKey，发现params和encSecKey出于core_c7e.....js文件。
-   ![img.png](./images/params和encSecKey出处.png)
+    ![img.png](./images/params和encSecKey出处.png)
 
 ```js
 var bVj7c = window.asrsea(JSON.stringify(i7b), bsR1x(["流泪", "强"]), bsR1x(Xp4t.md), bsR1x(["爱心", "女孩", "惊恐", "大笑"]));
@@ -102,35 +108,31 @@ tracks: "[object Object]"
 
 ## 程序实现
 
--
-    1. encrypt.py
+- encrypt.py
 
-经过分析可以知道，向服务器传输的数据需要加密操作，加密算法涉及到AES和RSA混合加密，所以借鉴[@DAJINZI01](https://github.com/DAJINZI01)
-的[cipher.py](https://github.com/DAJINZI01/music163com) 写了一个encrypt.py，传入我们要向服务器发送的json数据，encrypt.py可以返回
-加密之后的params和encSecKey
+    经过分析可以知道，向服务器传输的数据需要加密操作，加密算法涉及到AES和RSA混合加密，所以借鉴[@DAJINZI01](https://github.com/DAJINZI01)
+    的[cipher.py](https://github.com/DAJINZI01/music163com) 写了一个encrypt.py，传入我们要向服务器发送的json数据，encrypt.py可以返回
+    加密之后的params和encSecKey
 
--
-    2. Netease.py
+- Netease.py
 
-编写一个网易云音乐的类，包含了自定义函数、move_songs、get_tracks_information、cut_songs、df_to_csv
+    编写一个网易云音乐的类，包含了自定义函数、move_songs、get_tracks_information、cut_songs、df_to_csv
+    
+    ~~~
+    - 自定义函数   定义token，需要用户自行输入
+    - move_songs 操作传入的歌单和歌曲，根据参数op决定是添加歌曲还是删除歌曲， 比如要像歌单123中加入为歌曲id为456，789的歌，playlistid就为123，trackids就是[456,789]，op是'add'
+    - get_tracks_information 根据传入的歌单id参数返回歌单的信息，信息包括歌单名字、歌曲名、歌曲id、歌手名、歌手id、专辑名
+    - cut_songs 调用move_songs函数实现歌曲的剪切功能
+    - df_to_csv 将传入的字典用csv存储，以歌单的名称命名
+    ~~~
 
-~~~
-- 自定义函数   定义token，需要用户自行输入
-- move_songs 操作传入的歌单和歌曲，根据参数op决定是添加歌曲还是删除歌曲， 比如要像歌单123中加入为歌曲id为456，789的歌，playlistid就为123，trackids就是[456,789]，op是'add'
-- get_tracks_information 根据传入的歌单id参数返回歌单的信息，信息包括歌单名字、歌曲名、歌曲id、歌手名、歌手id、专辑名
-- cut_songs 调用move_songs函数实现歌曲的剪切功能
-- df_to_csv 将传入的字典用csv存储，以歌单的名称命名
-~~~
+- sort_tracks.py
 
--
-    3. sort_tracks.py
+    返回歌曲id字典，字典按歌曲语言进行分类，函数中的language（小写）用来存储对应歌曲的语言，并将对应语言保存在新的以`changed_`开头+歌单命名的CSV文件中。 可以匹配`中英日韩文`。
 
-返回歌曲id字典，字典按歌曲语言进行分类，函数中的language（小写）用来存储对应歌曲的语言，并将对应语言保存在新的以`changed_`开头+歌单命名的CSV文件中。 可以匹配`中英日韩文`。
+- playlists.py
 
--
-    4. playlists.py
-
-调用上述包完成移动歌曲的操作。
+    调用上述包完成移动歌曲的操作。
 
 ## 使用方法
 
@@ -152,7 +154,7 @@ pip install -r requirements.txt
     - 需要把token改成自己的token，将自己token的值取替`自己添加`即可，token可以通过在浏览器按`F12`，选中`Network`的`Fetch/XHR`并刷新页面，将自己的token复制到`Netease.py`
       中的
       ```python
-          self.token = '自己添加'  # 用户自己添加
+      self.token = '自己添加'  # 用户自己添加
       ```
     - 查看token：
       ![查看token.png](images/查看token.png)
@@ -164,7 +166,7 @@ pip install -r requirements.txt
       将自己的cookie的值取替`自己添加`即可
 
     - 查看cookie：
-      ![查看cookie.png](images/查看cookie.png)
+      <div style="text-align: center;">![查看cookie.png](images/查看cookie.png)</div>
 
 
 2. playlist.py
